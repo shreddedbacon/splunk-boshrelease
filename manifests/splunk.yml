@@ -1,0 +1,141 @@
+---
+name: splunk
+
+instance_groups:
+- name: splunk-master
+  azs: [z1]
+  instances: 1
+  persistent_disk: 10_240
+  vm_type: default
+  stemcell: default
+  networks: [{name: default}]
+  jobs:
+  - name: bosh-dns-aliases
+    release: bosh-dns-aliases
+    properties:
+      aliases:
+      # reference master instancegroup to get master server ip addresses
+      - domain: master.splunk.internal
+        targets:
+          - deployment: splunk
+            domain: bosh
+            instance_group: splunk-master
+            network: default
+            query: '*'
+  - name: splunk-master
+    release: splunk-boshrelease
+    properties:
+      admin_user: 'admin'
+      admin_pass: 'changemeplz'
+      replication_factor: '2'
+      search_factor: '1'
+      cluster_label: 'cluster1'
+      pass_symmkey: ((pass4symmkey))
+      ssl:
+        certificate: ((splunk_tls.certificate))
+        private_key: ((splunk_tls.private_key))
+- name: splunk-peer
+  azs: [z1]
+  instances: 3
+  persistent_disk: 10_240
+  vm_type: default
+  stemcell: default
+  networks: [{name: default}]
+  jobs:
+  - name: bosh-dns-aliases
+    release: bosh-dns-aliases
+    properties:
+      aliases:
+      # reference master instancegroup to get master server ip addresses
+      - domain: master.splunk.internal
+        targets:
+          - deployment: splunk
+            domain: bosh
+            instance_group: splunk-master
+            network: default
+            query: '*'
+  - name: splunk-peer
+    release: splunk-boshrelease
+    properties:
+      master_hostname: master.splunk.internal
+      admin_user: 'admin'
+      admin_pass: 'changemeplz'
+      pass_symmkey: ((pass4symmkey))
+      ssl:
+        certificate: ((splunk_peer_tls.certificate))
+        private_key: ((splunk_peer_tls.private_key))
+      inputs: |
+        [monitor:///var/vcap/sys/log]
+        disabled = false
+        [udp://1514]
+        [udp://1515]
+- name: splunk-head
+  azs: [z1]
+  instances: 1
+  persistent_disk: 10_240
+  vm_type: default
+  stemcell: default
+  networks: [{name: default}]
+  jobs:
+  - name: bosh-dns-aliases
+    release: bosh-dns-aliases
+    properties:
+      aliases:
+      # reference master instancegroup to get master server ip addresses
+      - domain: master.splunk.internal
+        targets:
+          - deployment: splunk
+            domain: bosh
+            instance_group: splunk-master
+            network: default
+            query: '*'
+  - name: splunk-head
+    release: splunk-boshrelease
+    properties:
+      master_hostname: master.splunk.internal
+      admin_user: 'admin'
+      admin_pass: 'changemeplz'
+      pass_symmkey: ((pass4symmkey))
+      ssl:
+        certificate: ((splunk_searchhead_tls.certificate))
+        private_key: ((splunk_searchhead_tls.private_key))
+
+variables:
+- name: splunk_tls
+  type: certificate
+  options:
+    self_sign: true
+    common_name: splunk-master.local
+- name: splunk_searchhead_tls
+  type: certificate
+  options:
+    self_sign: true
+    common_name: splunk-searchhead.local
+- name: splunk_peer_tls
+  type: certificate
+  options:
+    self_sign: true
+    common_name: splunk-peer.local
+- name: pass4symmkey
+  type: password
+
+stemcells:
+- alias: default
+  os: ubuntu-trusty
+  version: 3586.26
+
+update:
+  canaries: 1
+  canary_watch_time: 1000-60000
+  update_watch_time: 1000-60000
+  max_in_flight: 32
+  serial: true
+
+releases:
+- name: "bosh-dns-aliases"
+  version: "0.0.3"
+  url: "https://bosh.io/d/github.com/cloudfoundry/bosh-dns-aliases-release?v=0.0.3"
+  sha1: "b0d0a0350ed87f1ded58b2ebb469acea0e026c"
+- name: splunk-boshrelease
+  version: latest
+

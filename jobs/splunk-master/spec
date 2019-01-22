@@ -1,0 +1,41 @@
+---
+name: splunk-master
+
+templates:
+  bin/ctl.sh.erb: bin/ctl.sh
+  config/server.conf.erb: config/system_local/server.conf
+  config/web.conf.erb: config/system_local/web.conf
+  config/user_seed.conf.erb: config/system_local/user-seed.conf
+  config/splunk-launch.conf.erb: config/splunk-launch.conf
+  ssl/splunk_ssl.crt.erb: ssl/splunk_ssl.crt
+  ssl/splunk_ssl.key.erb: ssl/splunk_ssl.key
+
+packages:
+  - splunk
+
+properties:
+  admin_user:
+    description: "administrator"
+    default: admin
+  admin_pass:
+    description: "password"
+    default: changeme
+  replication_factor:
+    description: "replication factor"
+    default: 2
+  search_factor:
+    description: "search factor"
+    default: 1
+  cluster_label:
+    description: "label for the cluster"
+    default: cluster1
+  pass_symmkey:
+    description: "pass4symmkey"
+    default: changeme
+  ssl:
+    certificate:
+      description: "ssl certificate for front end splunk"
+      optional: true
+    private_key:
+      description: "private key for ssl certificate"
+      optional: true

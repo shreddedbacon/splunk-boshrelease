@@ -1,0 +1,7 @@
+---
+name: splunk
+
+dependencies: []
+
+files:
+  - splunk/splunk-7.2.1.tar.gz

@@ -1,0 +1,5 @@
+check process splunk-master
+  matching splunkd
+  start program "/var/vcap/jobs/splunk-master/bin/ctl.sh start"
+  stop program "/var/vcap/jobs/splunk-master/bin/ctl.sh stop"
+  group vcap

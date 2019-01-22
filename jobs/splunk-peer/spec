@@ -1,0 +1,40 @@
+---
+name: splunk-peer
+
+templates:
+  bin/ctl.sh.erb: bin/ctl.sh
+  config/server.conf.erb: config/system_local/server.conf
+  config/web.conf.erb: config/system_local/web.conf
+  config/user_seed.conf.erb: config/system_local/user-seed.conf
+  config/splunk-launch.conf.erb: config/splunk-launch.conf
+  ssl/splunk_ssl.crt.erb: ssl/splunk_ssl.crt
+  ssl/splunk_ssl.key.erb: ssl/splunk_ssl.key
+  config/inputs.conf.erb: config/cluster/inputs.conf
+
+packages:
+  - splunk
+
+properties:
+  master_hostname:
+    description: hostname or ip address of the master node
+  admin_user:
+    description: "administrator"
+    default: admin
+  admin_pass:
+    description: "password"
+    default: changeme
+  pass_symmkey:
+    description: "pass4symmkey"
+    default: changeme
+  ssl:
+    certificate:
+      description: "ssl certificate for front end splunk"
+      optional: true
+    private_key:
+      description: "private key for ssl certificate"
+      optional: true
+  inputs:
+    description: "inputs to specify for peer nodes"
+    example: |
+             [monitor:///var/vcap/sys/log]
+             disabled = false

@@ -1,0 +1,8 @@
+[settings]
+mgmtHostPort = 0.0.0.0:8090
+
+<% if_p("ssl") do |ssl| %>
+enableSplunkWebSSL = true
+privKeyPath = $SPLUNK_HOME/etc/auth/splunkweb/splunk_ssl.key
+serverCert = $SPLUNK_HOME/etc/auth/splunkweb/splunk_ssl.crt
+<% end %>

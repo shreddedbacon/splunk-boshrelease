@@ -1,0 +1,46 @@
+#!/bin/bash
+
+RUN_DIR=/var/vcap/sys/run/splunk-peer
+LOG_DIR=/var/vcap/sys/log/splunk-peer
+JOB_DIR=/var/vcap/jobs/splunk-peer
+PACKAGE_DIR=/var/vcap/packages/splunk
+PIDFILE=${RUN_DIR}/pid
+
+case $1 in
+
+  start)
+    mkdir -p ${RUN_DIR} ${LOG_DIR}
+    mkdir -p ${PACKAGE_DIR}/etc/system/local
+    mkdir -p ${PACKAGE_DIR}/etc/apps/_cluster/local/
+
+    chown -R vcap:vcap ${RUN_DIR} ${LOG_DIR} ${PACKAGE_DIR}/
+
+    echo $$ > ${PIDFILE}
+
+    ln -fs ${JOB_DIR}/config/system_local/* ${PACKAGE_DIR}/etc/system/local/
+    ln -fs ${JOB_DIR}/config/splunk-launch.conf ${PACKAGE_DIR}/etc/
+    ln -fs ${JOB_DIR}/ssl/splunk_ssl* ${PACKAGE_DIR}/etc/auth/splunkweb/
+    ln -fs ${JOB_DIR}/config/cluster/* ${PACKAGE_DIR}/etc/apps/_cluster/local/
+
+    SPLUNK_DB=/var/vcap/store/splunk
+    if [ ! -d ${SPLUNK_DB} ]; then
+      mkdir -p ${SPLUNK_DB}
+    fi
+    chown vcap:vcap ${SPLUNK_DB}
+
+    exec chpst -u vcap:vcap ${PACKAGE_DIR}/bin/splunk start --accept-license --answer-yes --no-prompt \
+      >>  $LOG_DIR/splunk.stdout.log \
+      2>> $LOG_DIR/splunk.stderr.log
+
+    ;;
+
+  stop)
+    /var/vcap/packages/splunk/bin/splunk stop
+    rm -f $PIDFILE
+
+    ;;
+
+  *)
+    echo "Usage: ctl.sh {start|stop}" ;;
+
+esac

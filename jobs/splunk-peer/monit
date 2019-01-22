@@ -1,0 +1,5 @@
+check process splunk-peer
+  matching splunkd
+  start program "/var/vcap/jobs/splunk-peer/bin/ctl.sh start"
+  stop program "/var/vcap/jobs/splunk-peer/bin/ctl.sh stop"
+  group vcap

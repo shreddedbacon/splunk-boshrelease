@@ -1,0 +1,6 @@
+set -e
+
+tar xzf splunk/splunk-*.tar.gz \
+    -C ${BOSH_INSTALL_TARGET} \
+    --strip-components=1 \
+    splunk

@@ -1,0 +1,9 @@
+[general]
+pass4SymmKey = <%= p('pass_symmkey') %>
+
+[replication_port://9887]
+
+[clustering]
+master_uri = https://<%= p('master_hostname') %>:8090
+mode = slave
+pass4SymmKey = <%= p('pass_symmkey') %>

@@ -1,0 +1,8 @@
+[general]
+pass4SymmKey = <%= p('pass_symmkey') %>
+
+[clustering]
+multisite = true
+master_uri = https://<%= p('master_hostname') %>:8090
+mode = searchhead
+pass4SymmKey = <%= p('pass_symmkey') %>
