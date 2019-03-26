@@ -19,9 +19,10 @@ echo "Getting splunk version ${SPLUNK_VERSION}"
 SPLUNK_FILENAME=$(curl -s https://www.splunk.com/en_us/download/sem-os.html | grep -o -P "splunk-${SPLUNK_VERSION}-.[0-9a-f]{0,12}-Linux-x86_64.tgz" | uniq)
 echo "Found splunk file ${SPLUNK_FILENAME}"
 SPLUNK_DOWNLOAD=splunk-${SPLUNK_VERSION}.tar.gz
-if [ ! -f "./downloads/$SPLUNK_DOWNLOAD" ]
+if [ ! -f ".downloads/$SPLUNK_DOWNLOAD" ]
 then
   curl -L http://download.splunk.com/products/splunk/releases/${SPLUNK_VERSION}/splunk/linux/${SPLUNK_FILENAME} > .downloads/${SPLUNK_DOWNLOAD}
+  echo > config/blobs.yml
   bosh add-blob .downloads/${SPLUNK_DOWNLOAD} splunk/${SPLUNK_DOWNLOAD}
 else
   echo "already exists"
