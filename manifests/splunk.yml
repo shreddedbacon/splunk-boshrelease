@@ -23,7 +23,7 @@ instance_groups:
             network: default
             query: '*'
   - name: splunk-master
-    release: splunk-boshrelease
+    release: splunk
     properties:
       admin_user: 'admin'
       admin_pass: 'changemeplz'
@@ -36,7 +36,7 @@ instance_groups:
         private_key: ((splunk_tls.private_key))
 - name: splunk-peer
   azs: [z1]
-  instances: 3
+  instances: 2
   persistent_disk: 10_240
   vm_type: default
   stemcell: default
@@ -55,7 +55,7 @@ instance_groups:
             network: default
             query: '*'
   - name: splunk-peer
-    release: splunk-boshrelease
+    release: splunk
     properties:
       master_hostname: master.splunk.internal
       admin_user: 'admin'
@@ -90,7 +90,7 @@ instance_groups:
             network: default
             query: '*'
   - name: splunk-head
-    release: splunk-boshrelease
+    release: splunk
     properties:
       master_hostname: master.splunk.internal
       admin_user: 'admin'
@@ -122,7 +122,7 @@ variables:
 stemcells:
 - alias: default
   os: ubuntu-trusty
-  version: 3586.26
+  version: latest
 
 update:
   canaries: 1
@@ -135,7 +135,10 @@ releases:
 - name: "bosh-dns-aliases"
   version: "0.0.3"
   url: "https://bosh.io/d/github.com/cloudfoundry/bosh-dns-aliases-release?v=0.0.3"
-  sha1: "b0d0a0350ed87f1ded58b2ebb469acea0e026c"
-- name: splunk-boshrelease
+  sha1: "b0d0a0350ed87f1ded58b2ebb469acea0e026ccc"
+- name: splunk
   version: latest
-
+- name: "bosh-dns"
+  version: "1.10.0"
+  url: "https://bosh.io/d/github.com/cloudfoundry/bosh-dns-release?v=1.10.0"
+  sha1: "d1aadbda5d60c44dec4a429cda872cf64f6d8d0b"
