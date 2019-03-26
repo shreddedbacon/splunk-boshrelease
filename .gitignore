@@ -13,3 +13,4 @@ releases/**/*.tgz
 *#
 #*
 .downloads
+splunk-boshrelease*.tar.gz
